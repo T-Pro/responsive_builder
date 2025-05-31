@@ -90,46 +90,48 @@ class OrientationLayoutBuilder extends StatelessWidget {
 /// Provides a builder function for different screen types
 ///
 /// Each builder will get built based on the current device width.
-/// [breakpoints] define your own custom device resolutions
-/// [watch] will be built and shown when width is less than 300
-/// [mobile] will be built when width greater than 300
-/// [tablet] will be built when width is greater than 600
-/// [desktop] will be built if width is greater than 950
+/// [_breakpoints] define your own custom device resolutions
+/// [_watch] will be built and shown when width is less than 300
+/// [_mobile] will be built when width greater than 300
+/// [_tablet] will be built when width is greater than 600
+/// [_desktop] will be built if width is greater than 950
 class ScreenTypeLayout extends StatelessWidget {
-  final ScreenBreakpoints? breakpoints;
-  final bool? isWebOrDesktop;
+  final ScreenBreakpoints? _breakpoints;
+  final bool? _isWebOrDesktop;
 
-  final WidgetBuilder? watch;
-  final WidgetBuilder2? watch2;
+  final WidgetBuilder? _watch;
+  final WidgetBuilder2? _watch2;
 
-  final WidgetBuilder? mobile;
-  final WidgetBuilder2? phone2;
+  final WidgetBuilder? _mobile;
+  final WidgetBuilder2? _phone2;
 
-  final WidgetBuilder? tablet;
-  final WidgetBuilder2? tablet2;
+  final WidgetBuilder? _tablet;
+  final WidgetBuilder2? _tablet2;
 
-  final WidgetBuilder? desktop;
-  final WidgetBuilder2? desktop2;
+  final WidgetBuilder? _desktop;
+  final WidgetBuilder2? _desktop2;
 
   @Deprecated(
     'Use ScreenTypeLayout.builder instead for performance improvements',
   )
   ScreenTypeLayout({
     Key? key,
-    this.breakpoints,
-    this.isWebOrDesktop = null,
+    ScreenBreakpoints? breakpoints,
+    bool? isWebOrDesktop = null,
     Widget? watch,
     required Widget mobile,
     Widget? tablet,
     Widget? desktop,
-  })  : this.watch = _builderOrNull(watch),
-        this.watch2 = null,
-        this.mobile = _builderOrNull(mobile)!,
-        this.phone2 = null,
-        this.tablet = _builderOrNull(tablet),
-        this.tablet2 = null,
-        this.desktop = _builderOrNull(desktop),
-        this.desktop2 = null,
+  })  : this._breakpoints = breakpoints, 
+        this._isWebOrDesktop = isWebOrDesktop, 
+        this._watch = _builderOrNull(watch),
+        this._watch2 = null,
+        this._mobile = _builderOrNull(mobile)!,
+        this._phone2 = null,
+        this._tablet = _builderOrNull(tablet),
+        this._tablet2 = null,
+        this._desktop = _builderOrNull(desktop),
+        this._desktop2 = null,
         super(key: key) {
     _checkIfMobileOrDesktopIsSupplied();
   }
@@ -142,43 +144,51 @@ class ScreenTypeLayout extends StatelessWidget {
 
   ScreenTypeLayout.builder({
     Key? key,
-    this.breakpoints,
-    this.isWebOrDesktop = null,
-    this.watch,
-    this.mobile,
-    this.tablet,
-    this.desktop,
-  })  : this.watch2 = null,
-        this.phone2 = null,
-        this.tablet2 = null,
-        this.desktop2 = null,
+    ScreenBreakpoints? breakpoints,
+    bool? isWebOrDesktop = null,
+    Widget Function(BuildContext)? watch,
+    Widget Function(BuildContext)? mobile,
+    Widget Function(BuildContext)? tablet,
+    Widget Function(BuildContext)? desktop,
+  })  : this._breakpoints = breakpoints, 
+        this._isWebOrDesktop = isWebOrDesktop, 
+        this._desktop = desktop, 
+        this._tablet = tablet, 
+        this._mobile = mobile, 
+        this._watch = watch, 
+        this._watch2 = null,
+        this._phone2 = null,
+        this._tablet2 = null,
+        this._desktop2 = null,
         super(key: key) {
     _checkIfMobileOrDesktopIsSupplied();
   }
 
   ScreenTypeLayout.builder2({
     Key? key,
-    this.breakpoints,
-    this.isWebOrDesktop = null,
+    ScreenBreakpoints? breakpoints,
+    bool? isWebOrDesktop = null,
     WidgetBuilder2? watch,
     WidgetBuilder2? phone,
     WidgetBuilder2? tablet,
     WidgetBuilder2? desktop,
-  })  : this.watch = null,
-        this.watch2 = watch,
-        this.mobile = null,
-        this.phone2 = phone,
-        this.tablet = null,
-        this.tablet2 = tablet,
-        this.desktop = null,
-        this.desktop2 = desktop,
+  })  : this._breakpoints = breakpoints, 
+        this._isWebOrDesktop = isWebOrDesktop, 
+        this._watch = null,
+        this._watch2 = watch,
+        this._mobile = null,
+        this._phone2 = phone,
+        this._tablet = null,
+        this._tablet2 = tablet,
+        this._desktop = null,
+        this._desktop2 = desktop,
         super(key: key) {
     _checkIfMobileOrDesktopIsSupplied();
   }
 
   void _checkIfMobileOrDesktopIsSupplied() {
-    final hasMobileLayout = mobile != null || phone2 != null;
-    final hasDesktopLayout = desktop != null || desktop2 != null;
+    final hasMobileLayout = _mobile != null || _phone2 != null;
+    final hasDesktopLayout = _desktop != null || _desktop2 != null;
 
     assert(
       hasMobileLayout || hasDesktopLayout,
@@ -189,10 +199,10 @@ class ScreenTypeLayout extends StatelessWidget {
   }
 
   bool _usingBuilder2() {
-    return watch2 != null ||
-        phone2 != null ||
-        tablet2 != null ||
-        desktop2 != null;
+    return _watch2 != null ||
+        _phone2 != null ||
+        _tablet2 != null ||
+        _desktop2 != null;
   }
 
   /// Builds the widget tree for the [ScreenTypeLayout].
@@ -208,8 +218,8 @@ class ScreenTypeLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-      breakpoints: breakpoints,
-      isWebOrDesktop: isWebOrDesktop,
+      breakpoints: _breakpoints,
+      isWebOrDesktop: _isWebOrDesktop,
       builder: (context, sizingInformation) {
         if (_usingBuilder2()) {
           return _handleWidgetBuilder2(context, sizingInformation)!;
@@ -222,54 +232,54 @@ class ScreenTypeLayout extends StatelessWidget {
   Widget? _handleWidgetBuilder(
       BuildContext context, SizingInformation sizingInformation) {
     if (ResponsiveAppUtil.preferDesktop) {
-      return desktop?.call(context) ?? mobile!(context);
+      return _desktop?.call(context) ?? _mobile!(context);
     }
 
     // If we're at desktop size
     if (sizingInformation.deviceScreenType == DeviceScreenType.desktop) {
       // If we have supplied the desktop layout then display that
-      if (desktop != null) return desktop!(context);
+      if (_desktop != null) return _desktop!(context);
       // If no desktop layout is supplied we want to check if we have the size below it and display that
-      if (tablet != null) return tablet!(context);
+      if (_tablet != null) return _tablet!(context);
     }
 
     if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
-      if (tablet != null) return tablet!(context);
+      if (_tablet != null) return _tablet!(context);
     }
 
     if (sizingInformation.deviceScreenType == DeviceScreenType.watch &&
-        watch != null) {
-      return watch!(context);
+        _watch != null) {
+      return _watch!(context);
     }
 
-    return mobile?.call(context);
+    return _mobile?.call(context);
   }
 
   Widget? _handleWidgetBuilder2(
       BuildContext context, SizingInformation sizingInformation) {
     if (ResponsiveAppUtil.preferDesktop) {
-      return desktop2?.call(context, sizingInformation) ??
-          phone2!(context, sizingInformation);
+      return _desktop2?.call(context, sizingInformation) ??
+          _phone2!(context, sizingInformation);
     }
 
     // If we're at desktop size
     if (sizingInformation.deviceScreenType == DeviceScreenType.desktop) {
       // If we have supplied the desktop layout then display that
-      if (desktop2 != null) return desktop2!(context, sizingInformation);
+      if (_desktop2 != null) return _desktop2!(context, sizingInformation);
       // If no desktop layout is supplied we want to check if we have the size below it and display that
-      if (tablet2 != null) return tablet2!(context, sizingInformation);
+      if (_tablet2 != null) return _tablet2!(context, sizingInformation);
     }
 
     if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
-      if (tablet2 != null) return tablet2!(context, sizingInformation);
+      if (_tablet2 != null) return _tablet2!(context, sizingInformation);
     }
 
     if (sizingInformation.deviceScreenType == DeviceScreenType.watch &&
-        watch2 != null) {
-      return watch2!(context, sizingInformation);
+        _watch2 != null) {
+      return _watch2!(context, sizingInformation);
     }
 
-    return phone2?.call(context, sizingInformation);
+    return _phone2?.call(context, sizingInformation);
   }
 }
 

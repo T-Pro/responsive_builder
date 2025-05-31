@@ -1,3 +1,7 @@
+## 0.8.4
+
+ - Make `WidgetBuilder` and `WidgetBuilder2` values private.
+
 ## 0.8.3
 
  - Add `ScreenTypeLayout.builder2` that includes `SizingInformation`.
